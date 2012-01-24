@@ -1,0 +1,34 @@
+<VirtualHost *:80>
+  # Default virtualhost if none of the other ones match.
+  # Used to display a quick "index.html" with the servername.
+  # AND used to serve serverinfo files.
+  ServerAdmin daniel.zijderveld@nelen-schuurmans.nl
+
+  DocumentRoot /var/www
+  <Directory />
+    Options FollowSymLinks
+    AllowOverride None
+  </Directory>
+  <Directory /var/www/>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+  </Directory>
+
+  <Location /serverinfo>
+    Order deny,allow
+    Deny from all
+    Allow from buildbot.lizardsystem.nl
+    Satisfy Any
+  </Location>
+
+  ErrorLog /var/log/apache2/error.log
+
+  # Possible values include: debug, info, notice, warn, error, crit,
+  # alert, emerg.
+  LogLevel warn
+
+  CustomLog /var/log/apache2/access.log combined
+
+</VirtualHost>

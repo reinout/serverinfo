@@ -1,0 +1,102 @@
+<html>
+  <head>
+    <title>Servers and sites overview</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"> </script>
+    <script>
+      $().ready(function () {
+        $('tr.package_info').click(function(){
+          $(this).hide();
+        }).hide();
+        $('tr.site_info').click(function(){
+          $('#' + this.id + '_package').show();
+        });
+      });
+    </script>
+    <style type="text/css">
+    td { vertical-align:top ; border-bottom: 1px solid #999}
+    </style>
+  </head>
+  <body>
+    <h1>Servers and sites overview</h1>
+    <p>Generated on {{ date }}.</p>
+
+    {% for server, sites in servers.items() | sort %}
+    <h2>{{ server }}</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>directory</th>
+          <th>vcs</th>
+          <th>virtualhosts</th>
+          <th>port(s)</th>
+          <th>ip(s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for site, site_info in sites.items() | sort %}
+        <tr id="{{ (server + site).replace('/', '_').replace('.', '_') }}" class="site_info">
+          <td>{{ site }}</td>
+          {% set vcs = site_info['vcs'] %}
+          <td>
+            {% if vcs['vcs'] %}
+            {{ vcs['vcs'] }} :
+            {{ vcs['url'] }}
+            {% if vcs['vcs'] == 'hg' %}
+            @ {{ vcs['release'] }}
+            {% endif %}
+            {% else %}
+            unknown
+            {% endif %}
+          </td>
+          {% set apache = site_info['apache'] %}
+          <td>
+            {% if apache['servernames'] %}
+            {% for name in apache['servernames'] %}
+            <a href="http://{{ name }}"> {{ name }} </a><br/>
+            {% endfor %}
+            {% else %}
+            &nbsp;
+            {% endif %}
+          </td>
+          <td>{{ ','.join(apache['ports']) | default('&nbsp;', true) }}</td>
+          <td>{{ ','.join(apache['ips']) | default('&nbsp;', true) }}</td>
+        </tr>
+        {% if site_info['eggs'] %}
+        <tr id="{{ (server + site).replace('/', '_').replace('.', '_') + '_package' }}" class="package_info">
+          <td>&nbsp;</td>
+          <td colspan="4">
+            {% if site_info['extends'] %}
+            <p><strong>extends</strong> {{ site_info['extends']}}</p>
+            {% endif %}
+            {% for package, version in site_info['eggs'].items() | sort %}
+            <a href="#package_{{ package }}">{{ package }}</a> {{ version }} <br/>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endfor %}
+
+    <h1>Package info</h1>
+    {% for package, package_info in packages.items() | sort %}
+    <h2 id="package_{{ package }}">
+      {{ package }}
+    </h2>
+    <dl>
+      {% for version, sites in package_info.items() | sort %}
+      <dt>{{ version }}</dt>
+      <dd>
+        {% for server, site in sites | sort %}
+        <a href="#{{ (server + site).replace('.', '_').replace('/', '_') }}">
+          {{ site }}
+        </a><br/>
+        {% endfor %}
+      </dd>
+      {% endfor %}
+    </dl>
+    {% endfor %}
+    </dl>
+  </body>
+</html>
