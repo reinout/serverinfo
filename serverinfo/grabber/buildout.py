@@ -111,6 +111,7 @@ def grab_one(directory):
     result['extends'] = extends_info(directory)
     result['eggs'] = eggs_info(directory)
     result['vcs'] = vcs_info(directory)
+    result['id'] = id(directory)
     outfile = os.path.join(utils.grabber_dir(),
                            FILENAME.format(id=id(directory)))
     open(outfile, 'w').write(
@@ -120,7 +121,6 @@ def grab_one(directory):
 
 def grab_all():
     """Grab and write info on all the buildouts."""
-    utils.clear_directory_contents(utils.grabber_dir())
     buildout_dirs = [os.path.join(SRV_DIR, d)
                      for d in os.listdir(SRV_DIR)]
     buildout_dirs = [d for d in buildout_dirs
