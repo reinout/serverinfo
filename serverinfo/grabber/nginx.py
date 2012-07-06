@@ -51,7 +51,7 @@ def grab_one(configfile):
         parts = proxy_pass.split(':')
         port = parts[-1]
         result['proxy_port'] = port
-
+    result['id'] = id(server_names)
     outfile = os.path.join(utils.grabber_dir(),
                            FILENAME.format(id=id(server_names)))
     open(outfile, 'w').write(
