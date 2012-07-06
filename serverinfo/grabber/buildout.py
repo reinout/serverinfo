@@ -103,6 +103,7 @@ def eggs_info(directory):
 
 def grab_one(directory):
     """Grab and write info on one buildout."""
+    logger.info("Grabbing buildout info from %s", directory)
     result = {}
     result['extends'] = extends_info(directory)
     result['eggs'] = eggs_info(directory)

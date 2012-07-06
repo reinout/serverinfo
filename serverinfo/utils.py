@@ -43,6 +43,7 @@ def clear_directory_contents(directory):
     with cd(directory):
         for filename in os.listdir('.'):
             os.remove(filename)
+    logger.debug("Cleared files out of %s", directory)
 
 
 def setup_logging():
