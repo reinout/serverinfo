@@ -23,6 +23,8 @@ setup(name='serverinfo',
                         ],
       entry_points={
           'console_scripts': [
+              'grab_all = serverinfo.grabber.grabber:main',
+
               'construct = serverinfo.scripts:construct',
               'construct_all = serverinfo.scripts:construct_all',
               'collect = serverinfo.scripts:collect',
