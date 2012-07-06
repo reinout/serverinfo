@@ -1,7 +1,11 @@
 from __future__ import unicode_literals
 from contextlib import contextmanager
+import logging
 import os
 import sys
+
+
+logger = logging.getLogger(__name__)
 
 
 @contextmanager
@@ -39,3 +43,13 @@ def clear_directory_contents(directory):
     with cd(directory):
         for filename in os.listdir('.'):
             os.remove(filename)
+
+
+def setup_logging():
+    """Configure console logging."""
+    if '-v' in sys.argv:
+        loglevel = logging.DEBUG
+    else:
+        loglevel = logging.INFO
+    logging.basicConfig(level=loglevel,
+                        format="%(levelname)s: %(message)s")
