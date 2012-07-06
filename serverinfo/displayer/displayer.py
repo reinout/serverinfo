@@ -3,6 +3,7 @@ import datetime
 import json
 import logging
 import os
+import collections
 
 from jinja2 import Environment, PackageLoader
 
@@ -15,21 +16,24 @@ data = {}
 data['server'] = {}
 data['buildout'] = {}
 data['nginx'] = {}
+data['egg'] = {}
 
 
 class Common(object):
     template_name = None
     subdir = None
-    simple_fields = ['buildout_directory',
-                     'configfile',
-                     'server_names',
-                     'proxy_port',
-                     ]
+    simple_fields = []
+    title_prefix = ''
 
     def __init__(self, the_json):
         self.json = the_json
         self.data = json.loads(self.json)
         self.id = self.data['id']
+        self.prepare()
+        self.title = ' '.join([self.title_prefix, self.id])
+
+    def prepare(self):
+        pass
 
     @property
     def generated_on(self):
@@ -57,9 +61,15 @@ class Common(object):
         return result
 
 
-class Site(Common):
+class Nginx(Common):
     subdir = 'sites'
     template_name = 'nginx.html'
+    title_prefix = 'NGINX configuration of'
+    simple_fields = ['buildout_directory',
+                     'configfile',
+                     'server_names',
+                     'proxy_port',
+                     ]
 
     @property
     def raw_contents(self):
@@ -71,28 +81,80 @@ class Site(Common):
         buildout_id = self.data.get('buildout_id')
         if buildout_id is not None:
             link = '../buildouts/%s.html' % buildout_id
-            title = 'Buildout site info'
+            title = 'Buildout directory info'
             result.append([link, title])
         return result
 
 
+class Buildout(Common):
+    subdir = 'buildouts'
+    template_name = 'buildout.html'
+    title_prefix = 'Buildout directory'
+    simple_fields = ['directory',
+                     'extends',  # TODO: fix this: missing KGS here.
+                     'version_control_system',
+                     'version_control_url',
+                     ]
+    # TODO: KGS handling, just like eggs.
+
+    def prepare(self):
+        if ('vcs' in self.data) and self.data['vcs']:
+            vcs = self.data['vcs']['vcs']
+            vcs_url = self.data['vcs']['url']
+            self.data['version_control_system'] = vcs
+            self.data['version_control_url'] = vcs_url
+        self.eggs = []
+        for egg_name, version in self.data['eggs'].items():
+            if egg_name not in data['egg']:
+                data['egg'][egg_name] = Egg(egg_name)
+            data['egg'][egg_name].add_usage(self, version)
+
+
+class Egg(Common):
+    # Well, it is not actually that common...
+    subdir = 'eggs'
+    template_name = 'egg.html'
+    title_prefix = 'Egg'
+    simple_fields = ['directory',
+                     'extends',  # TODO: fix this: missing KGS here.
+                     'version_control_system',
+                     'version_control_url',
+                     ]
+
+    def __init__(self, egg_name):
+        self.id = egg_name
+        self.title = ' '.join([self.title_prefix, self.id])
+        self.versions = collections.defaultdict(list)
+
+    def add_usage(self, buildout, version):
+        self.versions[version].append(buildout)
+
+
 def collect_data():
     """Collect all the json data and load it in memory."""
+    mapping = {'nginx': Nginx,
+               'buildout': Buildout}
     with utils.cd(utils.displayer_dir()):
         for dirpath, dirnames, filenames in os.walk('.'):
             # server_id = dirpath
             for json_file in [f for f in filenames if f.endswith('.json')]:
                 kind = json_file.split('___')[0]
                 filepath = os.path.join(dirpath, json_file)
+                logger.debug("Loading info from %s",
+                             os.path.abspath(filepath))
                 json_content = open(filepath).read()
-                site = Site(json_content)
-                data[kind][site.id] = site
-                logger.debug("Loaded info from %s", filepath)
+                klass = mapping[kind]
+                obj = klass(json_content)
+                data[kind][obj.id] = obj
 
 
 def generate_html():
-    for site in data['nginx'].values():
-        site.write()
+    for nginx in data['nginx'].values():
+        nginx.write()
+    for buildout in data['buildout'].values():
+        buildout.write()
+    for egg in data['egg'].values():
+        egg.write()
 
 
 def main():
