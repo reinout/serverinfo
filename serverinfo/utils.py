@@ -35,6 +35,16 @@ def grabber_dir():
     return os.path.join(buildout_dir(), 'var', 'grabber')
 
 
+def displayer_dir():
+    """Return input directory for data we want to display."""
+    return os.path.join(buildout_dir(), 'var', 'displayer')
+
+
+def html_dir():
+    """Return output directory for the html we generate."""
+    return os.path.join(buildout_dir(), 'var', 'html')
+
+
 def clear_directory_contents(directory):
     """Clear a directory of files.
 

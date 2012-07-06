@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>{{ id }}</title>
+  </head>
+  <body>
+    <h1>{{ id }}</h1>
+
+    <h2>Links</h2>
+    <ul>
+      <li>
+        <a href="../buildouts/{{ buildout_id }}.html">Buildout site info</a>
+      </li>
+    </ul>
+
+    <h2>Data</h2>
+    <dl>
+      <dt>Buildout directory</dt>
+      <dd>{{ buildout_directory }}</dd>
+
+      <dt>Configfile</dt>
+      <dd>{{ configfile }}</dd>
+
+      <dt>Proxy port</dt>
+      <dd>{{ proxy_port }}</dd>
+    </dl>
+
+    <h2>Raw contents</h2>
+    <pre>{% for line in contents %}
+{{ line }}
+      {% endfor %}</pre>
+
+  </body>
+</html>
