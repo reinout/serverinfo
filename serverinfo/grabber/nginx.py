@@ -42,8 +42,8 @@ def grab_one(configfile):
     # so something like /srv/DIRNAME/var/log/access.log.
     logfile = settings['access_log']
     parts = logfile.split('/')
-    result['buildout_id'] = parts[1]
-    result['buildout_directory'] = os.path.join(parts[:2])
+    result['buildout_id'] = parts[2]
+    result['buildout_directory'] = os.path.join(parts[1:3])
     if 'proxy_pass' in settings:
         proxy_pass = settings['proxy_pass']
         result['proxy_pass'] = proxy_pass
