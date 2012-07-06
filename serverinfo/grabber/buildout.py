@@ -119,7 +119,7 @@ def grab_all():
     buildout_dirs = [os.path.join(SRV_DIR, d)
                      for d in os.listdir(SRV_DIR)]
     buildout_dirs = [d for d in buildout_dirs
-                     if os.path.isdir(d)]
+                     if os.path.exists(os.path.join(d, 'buildout.cfg'))]
     for buildout_dir in buildout_dirs:
         grab_one(buildout_dir)
 
