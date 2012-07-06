@@ -109,10 +109,11 @@ def grab_one(directory):
     result['extends'] = extends_info(directory)
     result['eggs'] = eggs_info(directory)
     result['vcs'] = vcs_info(directory)
-    output_filename = FILENAME.format(id=id(directory))
-    open(output_filename, 'w').write(
+    outfile = os.path.join(utils.grabber_dir(),
+                           FILENAME.format(id=id(directory)))
+    open(outfile, 'w').write(
         json.dumps(result, sort_keys=True, indent=4))
-    logger.debug("Wrote info to %s", output_filename)
+    logger.debug("Wrote info to %s", outfile)
 
 
 def grab_all():
