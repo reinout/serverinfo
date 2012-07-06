@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 def id(directory):
     """Return id of buildout based on the directory name."""
-    return os.path.split(os.path.dirname('/srv/test/'))[-1]
+    return os.path.split(os.path.dirname(directory))[-1]
 
 
 def extends_info(directory):
@@ -105,6 +105,7 @@ def grab_one(directory):
     """Grab and write info on one buildout."""
     logger.info("Grabbing buildout info from %s", directory)
     result = {}
+    result['directory'] = directory
     result['extends'] = extends_info(directory)
     result['eggs'] = eggs_info(directory)
     result['vcs'] = vcs_info(directory)
