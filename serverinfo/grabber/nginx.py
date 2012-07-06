@@ -33,7 +33,7 @@ def grab_one(configfile):
             continue
         # We treat the first word on the line as a setting name. Good enough
         # for our purpose.
-        settings[parts[0]] = parts[1]
+        settings[parts[0]] = parts[1].rstrip(';')
     server_names = settings['server_name']
     server_names = server_names.split()
     server_names = [name for name in server_names if name]
@@ -47,9 +47,9 @@ def grab_one(configfile):
     if 'proxy_pass' in settings:
         proxy_pass = settings['proxy_pass']
         result['proxy_pass'] = proxy_pass
-        # Looks like 'proxy_pass http://localhost:9000;'.
-        parts = proxy_pass.split(':')  # Colon.
-        port = parts[-1].strip(';')  # Semicolon.
+        # Looks like 'proxy_pass http://localhost:9000'.
+        parts = proxy_pass.split(':')
+        port = parts[-1]
         result['proxy_port'] = port
 
     outfile = os.path.join(utils.grabber_dir(),
