@@ -26,7 +26,9 @@ logger = logging.getLogger(__name__)
 
 def id(directory):
     """Return id of buildout based on the directory name."""
-    return os.path.split(os.path.dirname(directory))[-1]
+    directory = directory.rstrip('/')
+    parts = directory.split('/')
+    return parts[-1]
 
 
 def extends_info(directory):
