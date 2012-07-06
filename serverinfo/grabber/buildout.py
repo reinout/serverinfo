@@ -117,7 +117,8 @@ def grab_all():
     """Grab and write info on all the buildouts."""
     utils.clear_directory_contents(utils.grabber_dir())
     buildout_dirs = [os.path.join(SRV_DIR, d)
-                     for d in os.listdir(SRV_DIR)
+                     for d in os.listdir(SRV_DIR)]
+    buildout_dirs = [d for d in buildout_dirs
                      if os.path.isdir(d)]
     for buildout_dir in buildout_dirs:
         grab_one(buildout_dir)
