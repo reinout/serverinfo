@@ -111,6 +111,7 @@ def grab_one(directory):
     output_filename = FILENAME.format(id=id(directory))
     open(output_filename, 'w').write(
         json.dumps(result, sort_keys=True, indent=4))
+    logger.debug("Wrote info to %s", output_filename)
 
 
 def grab_all():
