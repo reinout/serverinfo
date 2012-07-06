@@ -11,3 +11,5 @@ htmlcov
 nosetests.xml
 reports
 buildout.cfg
+out.tgz
+var
