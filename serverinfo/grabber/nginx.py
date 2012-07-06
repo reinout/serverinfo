@@ -24,7 +24,7 @@ def grab_one(configfile):
     result = {}
     result['configfile'] = configfile
     contents = open(configfile).readlines()
-    result['contents'] = contents
+    result['contents'] = ''.join(contents)
     settings = {}
     for line in contents:
         line = line.strip()
