@@ -10,3 +10,4 @@ htmlcov
 .coverage
 nosetests.xml
 reports
+buildout.cfg

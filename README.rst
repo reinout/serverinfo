@@ -1,28 +1,31 @@
 Serverinfo script
 =================
 
+**What it does**: extract information from your apache/nginx configuration
+like sitename and port numbers. And from your buildout-generated
+``bin/zopectl`` or ``bin/django`` to list the packages used.
+
 Reinout van Rees made this script initially for The Health Agency. Quite
 common-company-server-setup specific. Now it is still a bit company specific
 as it is in use now at `Nelen & Schuurmans <http://www.nelen-schuurmans.nl>`_,
 but it at least provides example code and ideas you can borrow.
-
-
-**What it does**: extract information from your apache/nginx configuration
-like sitename and port numbers. And from your buildout-generated
-``bin/zopectl`` or ``bin/django`` to list the packages used.
 
 On every server, a .json is generated and placed somewhere (preferrably a
 network drive). One server grabs all the .json files and generates an overview
 html page.
 
 
-Too short usage instructions
------------------------------
+Setup: symlink the correct buildout configuration
+-------------------------------------------------
 
-On a machine you want to gather information from, run buildout with '-c server.cfg'.
+Before you start, you have to symlink the correct buildout configuration::
 
-On the machine on which you want to collect serverinfo from the other
-machines, run buildout with '-c centralserver.cfg'.
+    $ ln -s development.cfg buildout.cfg
+
+This is if you want to develop on serverinfo itself. On the machines where you
+want to grab information, use ``grabber.cfg``. On the central machine where
+you want to generate and display the html overview pages from all the servers'
+info, use ``displayer.cfg``.
 
 
 TODO
