@@ -18,7 +18,7 @@ import pkg_resources
 
 from serverinfo import utils
 
-FILENAME = 'buildout-{id}.json'
+FILENAME = 'buildout___{id}.json'
 SRV_DIR = '/srv/'
 
 logger = logging.getLogger(__name__)
