@@ -162,11 +162,10 @@ class Server(Common):
                      'users',
                      'backup_jobs',
                      ]
-    sites = []
-    buildouts = []
 
     def prepare(self):
-        pass
+        self.sites = []
+        self.buildouts = []
 
     @property
     def sites_for_display(self):
