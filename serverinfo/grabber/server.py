@@ -21,9 +21,14 @@ def grab_all():
     result['hostname'] = hostname
     result['users'] = os.listdir('/home')
     backupninja_dir = '/etc/backup.d/'
-    if os.path.exists(backupninja_dir):
-        result['backup_jobs'] = [d for d in os.listdir(backupninja_dir)
-                                 if not d.startswith('.')]
+    try:
+        if os.path.exists(backupninja_dir):
+            result['backup_jobs'] = [d for d in os.listdir(backupninja_dir)
+                                     if not d.startswith('.')]
+    except OSError, e:
+        logger.warn(e)
+        result['backup_jobs'] = (
+            '/etc/backup.d is not accessible to the serverinfo script.')
 
     outfile = os.path.join(utils.grabber_dir(),
                            FILENAME.format(id=hostname))
