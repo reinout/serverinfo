@@ -22,6 +22,19 @@
       {% endfor %}
     </dl>
 
+    <h2>Versions</h2>
+    <dl>
+      {% for version, buildouts in view.versions_for_display %}
+        <dt>{{ version }}</dt>
+        <dd>
+          {% for buildout in buildouts %}
+            <div>
+              <a href="{{ buildout.link }}">{{ buildout.id }}</a>
+            </div>
+          {% endfor %}
+        </dd>
+      {% endfor %}
+    </dl>
     <hr />
     <div>Generated on {{ view.generated_on }}.</div>
 <!--

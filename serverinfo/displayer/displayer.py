@@ -143,6 +143,12 @@ class Egg(Common):
     def add_usage(self, buildout, version):
         self.versions[version].append(buildout)
 
+    @property
+    def versions_for_display(self):
+        for key in sorted(self.versions.keys()):
+            yield key, self.versions[key]
+
+
 
 def collect_data():
     """Collect all the json data and load it in memory."""
