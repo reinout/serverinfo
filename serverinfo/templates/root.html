@@ -5,16 +5,10 @@
   <body>
     <h1>{{ view.title }}</h1>
 
-    <p>
-      <a href="../index.html">Back to the root overview</a>.
-    </p>
-
     <ul>
-      {% for obj in view.objs %}
+      {% for subitem in view.subitems %}
         <li>
-          <div>
-            <a href="{{ obj.link }}">{{ obj.id }}</a>
-          </div>
+          <a href="{{ subitem }}/index.html">Overview of {{ subitem }}.</a>
         </li>
       {% endfor %}
     </ul>

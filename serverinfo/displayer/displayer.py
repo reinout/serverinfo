@@ -23,6 +23,7 @@ class Common(object):
     template_name = None
     subdir = None
     simple_fields = []
+    link_attributes = []
     title_prefix = ''
 
     def __init__(self, the_json):
@@ -41,6 +42,14 @@ class Common(object):
     @property
     def link(self):
         return "../%s/%s.html" % (self.subdir, self.id)
+
+    @property
+    def links(self):
+        for link_attribute in self.link_attributes:
+            obj = getattr(self, link_attribute)
+            if obj is None:
+                continue
+            yield obj.link, obj.title
 
     @property
     def generated_on(self):
@@ -77,20 +86,28 @@ class Nginx(Common):
                      'server_names',
                      'proxy_port',
                      ]
+    buildout = None
+    link_attributes = ['buildout']
 
     @property
     def raw_contents(self):
         return '\n'.join(self.data['contents'])
 
+
+class CodeLink(object):
+
+    def __init__(self, vcs, url):
+        self.vcs = vcs
+        self.url = url
+
     @property
-    def links(self):
-        result = []
-        buildout_id = self.data.get('buildout_id')
-        if buildout_id is not None:
-            link = '../buildouts/%s.html' % buildout_id
-            title = 'Buildout directory info'
-            result.append([link, title])
-        return result
+    def title(self):
+        return "Browse the %s code" % self.vcs
+
+    @property
+    def link(self):
+        if self.vcs == 'svn':
+            return self.url.replace('svn/Products', 'trac/browser/Products')
 
 
 class Buildout(Common):
@@ -102,6 +119,9 @@ class Buildout(Common):
                      'version_control_system',
                      'version_control_url',
                      ]
+    site = None
+    code_url = None
+    link_attributes = ['site', 'code_url']
     # TODO: KGS handling, just like eggs.
 
     def prepare(self):
@@ -110,6 +130,10 @@ class Buildout(Common):
             vcs_url = self.data['vcs']['url']
             self.data['version_control_system'] = vcs
             self.data['version_control_url'] = vcs_url
+            # https://office.lizard.net/trac/browser/Products
+            # https://office.lizard.net/svn/Products/sites/demo/tags/3.0.11/
+            self.code_url = CodeLink(vcs, vcs_url)
+
         self.eggs = {}
         for egg_name, version in self.data['eggs'].items():
             if egg_name not in data['egg']:
@@ -149,7 +173,6 @@ class Egg(Common):
             yield key, self.versions[key]
 
 
-
 def collect_data():
     """Collect all the json data and load it in memory."""
     mapping = {'nginx': Nginx,
@@ -166,15 +189,44 @@ def collect_data():
                 klass = mapping[kind]
                 obj = klass(json_content)
                 data[kind][obj.id] = obj
+    # Link buildouts and nginx sites.
+    for nginx in data['nginx'].values():
+        buildout_id = nginx.data.get('buildout_id')
+        if buildout_id is not None:
+            buildout = data['buildout'].get(buildout_id)
+            if buildout is not None:
+                nginx.buildout = buildout
+                buildout.site = nginx
 
 
 def generate_html():
-    for nginx in data['nginx'].values():
-        nginx.write()
-    for buildout in data['buildout'].values():
-        buildout.write()
-    for egg in data['egg'].values():
-        egg.write()
+    index_subdirs = {'nginx': 'sites',
+                     'buildout': 'buildouts',
+                     'egg': 'eggs'}
+    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+
+    for kind in ['nginx', 'buildout', 'egg']:
+        for obj in data[kind].values():
+            obj.write()
+        # Overview.
+        subdir = index_subdirs[kind]
+        outfile = os.path.join(utils.html_dir(),
+                               subdir,
+                               'index.html')
+        template = jinja_env.get_template('index.html')
+        open(outfile, 'w').write(template.render(
+                view={'title': 'Overview of %s' % subdir,
+                      'objs': data[kind].values(),
+                      'generated_on': now}))
+        logger.info("Wrote %s", outfile)
+
+    outfile = os.path.join(utils.html_dir(), 'index.html')
+    template = jinja_env.get_template('root.html')
+    open(outfile, 'w').write(template.render(
+            view={'title': 'Root overview',
+                  'subitems': index_subdirs.values(),
+                  'generated_on': now}))
+    logger.info("Wrote %s", outfile)
 
 
 def main():
