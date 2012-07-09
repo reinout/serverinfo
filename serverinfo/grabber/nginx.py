@@ -62,6 +62,8 @@ def grab_one(configfile):
 
 def grab_all():
     """Grab and write info on all the ngnix configs."""
+    if not os.path.exists(NGINX_DIR):
+        return
     config_files = [f for f in os.listdir(NGINX_DIR)
                     if f != 'default' and not f.startswith('.')]
     config_files = [os.path.join(NGINX_DIR, d) for d in config_files]

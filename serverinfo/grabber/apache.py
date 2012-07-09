@@ -74,7 +74,9 @@ def grab_one(configfile):
 
 
 def grab_all():
-    """Grab and write info on all the ngnix configs."""
+    """Grab and write info on all the apache configs."""
+    if not os.path.exists(APACHE_DIR):
+        return
     config_files = [f for f in os.listdir(APACHE_DIR)
                     if f != 'default' and not f.startswith('.')]
     config_files = [os.path.join(APACHE_DIR, d) for d in config_files]
