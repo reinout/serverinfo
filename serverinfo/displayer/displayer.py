@@ -237,12 +237,12 @@ def collect_data():
                 if server is None:
                     logger.error("Server with hostname %s not found.",
                                  hostname)
-                    continue
-                obj.server = server
-                if kind == 'nginx':
-                    server.sites.append(obj)
-                elif kind == 'buildout':
-                    server.buildouts.append(obj)
+                else:
+                    obj.server = server
+                    if kind == 'nginx':
+                        server.sites.append(obj)
+                    elif kind == 'buildout':
+                        server.buildouts.append(obj)
 
 
 def generate_html():
