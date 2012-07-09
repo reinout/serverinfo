@@ -233,7 +233,11 @@ def collect_data():
             hostname = obj.data.get('hostname')
             if hostname is not None:
                 hostname = hostname.lower()
-                server = data['server'][hostname]
+                server = data['server'].get(hostname)
+                if server is None:
+                    logger.error("Server with hostname %s not found.",
+                                 hostname)
+                    continue
                 obj.server = server
                 if kind == 'nginx':
                     server.sites.append(obj)
