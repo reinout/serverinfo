@@ -19,12 +19,12 @@ def grab_all():
     hostname = utils.hostname()
     result['id'] = hostname
     result['hostname'] = hostname
-    result['users'] = os.listdir('/home')
+    result['users'] = [d for d in os.listdir('/home')
+                       if not d.startswith('.')]
     backupninja_dir = '/etc/backup.d/'
     try:
         if os.path.exists(backupninja_dir):
-            result['backup_jobs'] = [d for d in os.listdir(backupninja_dir)
-                                     if not d.startswith('.')]
+            result['backup_jobs'] = os.listdir(backupninja_dir)
     except OSError, e:
         logger.warn(e)
         result['backup_jobs'] = (
