@@ -218,7 +218,7 @@ def collect_data():
                 json_content = open(filepath).read()
                 klass = mapping[kind]
                 obj = klass(json_content)
-                data[kind][obj.id] = obj
+                data[kind][obj.id.lower()] = obj
     # Link buildouts and nginx sites.
     for nginx in data['nginx'].values():
         buildout_id = nginx.data.get('buildout_id')
@@ -232,6 +232,7 @@ def collect_data():
         for obj in data[kind].values():
             hostname = obj.data.get('hostname')
             if hostname is not None:
+                hostname = hostname.lower()
                 server = data['server'][hostname]
                 obj.server = server
                 if kind == 'nginx':

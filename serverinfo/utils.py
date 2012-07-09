@@ -69,5 +69,5 @@ def setup_logging():
 
 def hostname():
     """Return hostname."""
-    return socket.gethostname()
+    return socket.gethostname().lower()
 
