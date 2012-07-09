@@ -81,7 +81,8 @@ class Nginx(Common):
     subdir = 'sites'
     template_name = 'nginx.html'
     title_prefix = 'NGINX configuration of'
-    simple_fields = ['buildout_directory',
+    simple_fields = ['hostname',
+                     'buildout_directory',
                      'configfile',
                      'server_names',
                      'proxy_port',
@@ -117,7 +118,8 @@ class Buildout(Common):
     subdir = 'buildouts'
     template_name = 'buildout.html'
     title_prefix = 'Buildout directory'
-    simple_fields = ['directory',
+    simple_fields = ['hostname',
+                     'directory',
                      'extends',  # TODO: fix this: missing KGS here.
                      'version_control_system',
                      'version_control_url',

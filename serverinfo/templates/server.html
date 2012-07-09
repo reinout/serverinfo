@@ -24,7 +24,7 @@
 
     <h2>Sites</h2>
     <ul>
-      {% for site in view.sites %}
+      {% for site in view.sites_for_display %}
         <li>
           <a href="{{ site.link }}">{{ site.title }}</a>
         </li>
@@ -33,7 +33,7 @@
 
     <h2>Buildouts</h2>
     <ul>
-      {% for buildout in view.buildouts %}
+      {% for buildout in view.buildouts_for_display %}
         <li>
           <a href="{{ buildout.link }}">{{ buildout.title }}</a>
         </li>
