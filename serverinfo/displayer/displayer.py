@@ -32,8 +32,15 @@ class Common(object):
         self.prepare()
         self.title = ' '.join([self.title_prefix, self.id])
 
+    def __cmp__(self, other):
+        return cmp(self.id, other.id)
+
     def prepare(self):
         pass
+
+    @property
+    def link(self):
+        return "../%s/%s.html" % (self.subdir, self.id)
 
     @property
     def generated_on(self):
@@ -103,11 +110,18 @@ class Buildout(Common):
             vcs_url = self.data['vcs']['url']
             self.data['version_control_system'] = vcs
             self.data['version_control_url'] = vcs_url
-        self.eggs = []
+        self.eggs = {}
         for egg_name, version in self.data['eggs'].items():
             if egg_name not in data['egg']:
                 data['egg'][egg_name] = Egg(egg_name)
-            data['egg'][egg_name].add_usage(self, version)
+            egg = data['egg'][egg_name]
+            egg.add_usage(self, version)
+            self.eggs[egg] = version
+
+    @property
+    def eggs_for_display(self):
+        for key in sorted(self.eggs.keys()):
+            yield key, self.eggs[key]
 
 
 class Egg(Common):

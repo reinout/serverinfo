@@ -22,6 +22,16 @@
       {% endfor %}
     </dl>
 
+    <h2>Eggs</h2>
+    <dl>
+      {% for egg, version in view.eggs_for_display %}
+        <dt>
+          <a href="{{ egg.link }}">{{ egg.id }}</a>
+        </dt>
+        <dd>{{ version }}</dd>
+      {% endfor %}
+    </dl>
+
     <hr />
     <div>Generated on {{ view.generated_on }}.</div>
 <!--
