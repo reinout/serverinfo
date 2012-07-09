@@ -28,7 +28,8 @@ def grab_all():
     result['users'] = os.listdir('/home')
     backupninja_dir = '/etc/backup.d/'
     if os.path.exists(backupninja_dir):
-        result['backup_jobs'] = os.listdir(backupninja_dir)
+        result['backup_jobs'] = [d for d in os.listdir(backupninja_dir)
+                                 if not d.startswith('.')]
 
     outfile = os.path.join(utils.grabber_dir(),
                            FILENAME.format(id=hostname))
