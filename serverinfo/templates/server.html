@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <title>{{ view.title }}</title>
+  </head>
+  <body>
+    <h1>{{ view.title }}</h1>
+
+    <h2>Links</h2>
+    <ul>
+      {% for link, title in view.links %}
+        <li>
+          <a href="{{ link }}">{{ title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <h2>Data</h2>
+    <dl>
+      {% for name, value in view.fields %}
+        <dt>{{ name }}</dt>
+        <dd>{{ value }}</dd>
+      {% endfor %}
+    </dl>
+
+    <h2>Sites</h2>
+    <ul>
+      {% for site in view.sites %}
+        <li>
+          <a href="{{ site.link }}">{{ site.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <h2>Buildouts</h2>
+    <ul>
+      {% for buildout in view.buildouts %}
+        <li>
+          <a href="{{ buildout.link }}">{{ buildout.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <hr />
+    <div>Generated on {{ view.generated_on }}.</div>
+<!--
+{{ view.json }}
+-->
+  </body>
+</html>

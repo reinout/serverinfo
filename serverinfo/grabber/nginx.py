@@ -38,6 +38,7 @@ def grab_one(configfile):
     server_names = server_names.split()
     server_names = [name for name in server_names if name]
     result['server_names'] = server_names
+    result['hostname'] = utils.hostname()
     # Assumption: access log is in the buildout directory where our site is,
     # so something like /srv/DIRNAME/var/log/access.log.
     logfile = settings['access_log']

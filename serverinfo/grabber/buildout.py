@@ -112,6 +112,8 @@ def grab_one(directory):
     result['eggs'] = eggs_info(directory)
     result['vcs'] = vcs_info(directory)
     result['id'] = id(directory)
+    result['hostname'] = utils.hostname()
+
     outfile = os.path.join(utils.grabber_dir(),
                            FILENAME.format(id=id(directory)))
     open(outfile, 'w').write(

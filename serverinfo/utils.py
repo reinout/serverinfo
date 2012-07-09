@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from contextlib import contextmanager
 import logging
 import os
+import socket
 import sys
 
 
@@ -64,3 +65,9 @@ def setup_logging():
         loglevel = logging.INFO
     logging.basicConfig(level=loglevel,
                         format="%(levelname)s: %(message)s")
+
+
+def hostname():
+    """Return hostname."""
+    return socket.gethostname()
+

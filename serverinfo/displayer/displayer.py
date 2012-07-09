@@ -87,7 +87,10 @@ class Nginx(Common):
                      'proxy_port',
                      ]
     buildout = None
-    link_attributes = ['buildout']
+    server = None
+    link_attributes = ['buildout',
+                       'server',
+                       ]
 
     @property
     def raw_contents(self):
@@ -121,7 +124,8 @@ class Buildout(Common):
                      ]
     site = None
     code_url = None
-    link_attributes = ['site', 'code_url']
+    server = None
+    link_attributes = ['site', 'code_url', 'server']
     # TODO: KGS handling, just like eggs.
 
     def prepare(self):
@@ -146,6 +150,29 @@ class Buildout(Common):
     def eggs_for_display(self):
         for key in sorted(self.eggs.keys()):
             yield key, self.eggs[key]
+
+
+class Server(Common):
+    subdir = 'servers'
+    template_name = 'server.html'
+    title_prefix = 'Linux server'
+    simple_fields = ['hostname',
+                     'users',
+                     'backup_jobs',
+                     ]
+    sites = []
+    buildouts = []
+
+    def prepare(self):
+        pass
+
+    @property
+    def sites_for_display(self):
+        return sorted(self.sites)
+
+    @property
+    def buildouts_for_display(self):
+        return sorted(self.buildouts)
 
 
 class Egg(Common):
@@ -176,6 +203,7 @@ class Egg(Common):
 def collect_data():
     """Collect all the json data and load it in memory."""
     mapping = {'nginx': Nginx,
+               'server': Server,
                'buildout': Buildout}
     with utils.cd(utils.displayer_dir()):
         for dirpath, dirnames, filenames in os.walk('.'):
@@ -197,15 +225,27 @@ def collect_data():
             if buildout is not None:
                 nginx.buildout = buildout
                 buildout.site = nginx
+    # Link buildouts+sites with servers.
+    for kind in ['nginx', 'buildout']:
+        for obj in data[kind].values():
+            hostname = obj.data.get('hostname')
+            if hostname is not None:
+                server = data['server'][hostname]
+                obj.server = server
+                if kind == 'nginx':
+                    server.sites.append(obj)
+                elif kind == 'buildout':
+                    server.buildouts.append(obj)
 
 
 def generate_html():
     index_subdirs = {'nginx': 'sites',
                      'buildout': 'buildouts',
+                     'server': 'servers',
                      'egg': 'eggs'}
     now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
 
-    for kind in ['nginx', 'buildout', 'egg']:
+    for kind in ['nginx', 'buildout', 'egg', 'server']:
         for obj in data[kind].values():
             obj.write()
         # Overview.
@@ -231,7 +271,7 @@ def generate_html():
 
 def main():
     utils.setup_logging()
-    for subdir in ['servers', 'buildouts', 'sites']:
+    for subdir in ['eggs', 'servers', 'buildouts', 'sites']:
         utils.clear_directory_contents(os.path.join(
                 utils.html_dir(), subdir))
     collect_data()
