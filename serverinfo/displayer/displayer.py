@@ -32,12 +32,15 @@ class Common(object):
         self.data = json.loads(self.json)
         self.id = self.data['id']
         self.prepare()
-        self.title = ' '.join([self.title_prefix,
-                               self.id,
-                               self.title_postfix])
 
     def __cmp__(self, other):
         return cmp(self.id, other.id)
+
+    @property
+    def title(self):
+        return ' '.join([self.title_prefix,
+                         self.id,
+                         self.title_postfix])
 
     def prepare(self):
         pass
@@ -160,6 +163,7 @@ class Buildout(Common):
     def title_postfix(self):
         """Warn if there's no site pointing at us."""
         if not self.site:
+            logger.warn("No site: %r", self.site)
             return "(not linked into a site!)"
         return ''
 
@@ -199,7 +203,6 @@ class Egg(Common):
 
     def __init__(self, egg_name):
         self.id = egg_name
-        self.title = ' '.join([self.title_prefix, self.id])
         self.versions = collections.defaultdict(list)
 
     def add_usage(self, buildout, version):
