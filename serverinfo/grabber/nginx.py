@@ -41,10 +41,11 @@ def grab_one(configfile):
     result['hostname'] = utils.hostname()
     # Assumption: access log is in the buildout directory where our site is,
     # so something like /srv/DIRNAME/var/log/access.log.
-    logfile = settings['access_log']
-    parts = logfile.split('/')
-    result['buildout_id'] = parts[2]
-    result['buildout_directory'] = '/srv/%s' % parts[2]
+    logfile = settings.get('access_log')
+    if logfile is not None:
+        parts = logfile.split('/')
+        result['buildout_id'] = parts[2]
+        result['buildout_directory'] = '/srv/%s' % parts[2]
     if 'proxy_pass' in settings:
         proxy_pass = settings['proxy_pass']
         result['proxy_pass'] = proxy_pass
