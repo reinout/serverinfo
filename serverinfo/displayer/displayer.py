@@ -25,13 +25,16 @@ class Common(object):
     simple_fields = []
     link_attributes = []
     title_prefix = ''
+    title_postfix = ''
 
     def __init__(self, the_json):
         self.json = the_json
         self.data = json.loads(self.json)
         self.id = self.data['id']
         self.prepare()
-        self.title = ' '.join([self.title_prefix, self.id])
+        self.title = ' '.join([self.title_prefix,
+                               self.id,
+                               self.title_postfix])
 
     def __cmp__(self, other):
         return cmp(self.id, other.id)
@@ -152,6 +155,13 @@ class Buildout(Common):
     def eggs_for_display(self):
         for key in sorted(self.eggs.keys()):
             yield key, self.eggs[key]
+
+    @property
+    def title_postfix(self):
+        """Warn if there's no site pointing at us."""
+        if not self.site:
+            return "(not linked into a site!)"
+        return ''
 
 
 class Server(Common):
