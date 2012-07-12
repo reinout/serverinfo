@@ -275,7 +275,7 @@ def generate_html():
         template = jinja_env.get_template('index.html')
         open(outfile, 'w').write(template.render(
                 view={'title': 'Overview of %s' % subdir,
-                      'objs': data[kind].values(),
+                      'objs': sorted(data[kind].values()),
                       'generated_on': now}))
         logger.info("Wrote %s", outfile)
 
