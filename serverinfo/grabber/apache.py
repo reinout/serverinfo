@@ -17,6 +17,7 @@ serveralias_regex = re.compile(r'^[^#]*ServerAlias ([a-z0-9\.\-]+)')
 ip_regex = re.compile((r'^[^#]*VirtualHost '
                        r'([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):'))
 port_regex = re.compile(r'^[^#]*http://[locahst127\.0]+:([0-9]+)/')
+directory_regex = re.compile(r'/srv/([a-z0-9\.\-_/]+)/var/log')
 
 
 def id(server_names):
@@ -36,6 +37,7 @@ def grab_one(configfile):
     servernames = set()
     ips = set()
     ports = set()
+    directories = set()
 
     # There should be only one conf per deployment, but we check anyway.
     for confline in contents:
@@ -43,6 +45,7 @@ def grab_one(configfile):
         servernames.update(serveralias_regex.findall(confline))
         ips.update(ip_regex.findall(confline))
         ports.update(port_regex.findall(confline))
+        directories.update(directory_regex.findall(confline))
     if not servernames:
         logger.info("No servernames found, probably empty default config.")
         return
@@ -54,20 +57,10 @@ def grab_one(configfile):
     result['ports'] = list(ports)
 
     result['id'] = id(result['server_names'])
-
-    # Assumption: access log is in the buildout directory where our site is,
-    # so something like /srv/DIRNAME/var/log/access.log.
-    # logfile = settings['access_log']
-    # parts = logfile.split('/')
-    # result['buildout_id'] = parts[2]
-    # result['buildout_directory'] = '/srv/%s' % parts[2]
-    # if 'proxy_pass' in settings:
-    #     proxy_pass = settings['proxy_pass']
-    #     result['proxy_pass'] = proxy_pass
-    #     # Looks like 'proxy_pass http://localhost:9000'.
-    #     parts = proxy_pass.split(':')
-    #     port = parts[-1]
-    #     result['proxy_port'] = port
+    if directories:
+        directory = directories[0]
+        result['buildout_id'] = directory
+        result['buildout_directory'] = '/srv/' + directory
 
     outfile = os.path.join(utils.grabber_dir(),
                            FILENAME.format(id=result['id']))
