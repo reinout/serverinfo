@@ -43,6 +43,9 @@ def grab_one(configfile):
         servernames.update(serveralias_regex.findall(confline))
         ips.update(ip_regex.findall(confline))
         ports.update(port_regex.findall(confline))
+    if not servernames:
+        logger.info("No servernames found, probably empty default config.")
+        return
     logger.debug("Servernames/aliases found: %s", servernames)
     logger.debug("IP addresses we listen to found: %s", ips)
     logger.debug("Local ports we redirect to found: %s", ports)
