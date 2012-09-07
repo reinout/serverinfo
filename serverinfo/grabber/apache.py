@@ -58,7 +58,7 @@ def grab_one(configfile):
 
     result['id'] = id(result['server_names'])
     if directories:
-        directory = directories[0]
+        directory = list(directories)[0]
         result['buildout_id'] = directory
         result['buildout_directory'] = '/srv/' + directory
 
