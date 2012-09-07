@@ -104,6 +104,11 @@ class Nginx(Common):
         return '\n'.join(self.data['contents'])
 
 
+class Apache(Nginx):
+    title_prefix = 'Apache configuration of'
+
+
+
 class CodeLink(object):
 
     def __init__(self, vcs, url):
@@ -217,6 +222,7 @@ class Egg(Common):
 def collect_data():
     """Collect all the json data and load it in memory."""
     mapping = {'nginx': Nginx,
+               'apache': Apache,
                'server': Server,
                'buildout': Buildout}
     with utils.cd(utils.displayer_dir()):
