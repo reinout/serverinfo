@@ -279,7 +279,8 @@ def generate_html():
                      'egg': 'eggs'}
     now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
 
-    data['site'] = data['apache'] + data['nginx']
+    data['site'] = data['apache']
+    data['site'].update(data['nginx'])
     for kind in ['buildout', 'server', 'egg', 'site']:
         for obj in data[kind].values():
             obj.write()
