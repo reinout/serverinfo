@@ -274,12 +274,13 @@ def collect_data():
 
 def generate_html():
     index_subdirs = {'nginx': 'sites',
+                     'apache': 'sites',
                      'buildout': 'buildouts',
                      'server': 'servers',
                      'egg': 'eggs'}
     now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
 
-    for kind in ['nginx', 'buildout', 'egg', 'server']:
+    for kind in index_subdirs.keys():
         for obj in data[kind].values():
             obj.write()
         # Overview.
