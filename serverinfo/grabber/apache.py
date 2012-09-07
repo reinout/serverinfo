@@ -9,7 +9,7 @@ import re
 from serverinfo import utils
 
 FILENAME = 'apache___{id}.json'
-APACHE_DIR = '/etc/apache/sites-enabled/'
+APACHE_DIR = '/etc/apache2/sites-enabled/'
 
 logger = logging.getLogger(__name__)
 servername_regex = re.compile(r'^[^#]*ServerName ([a-z0-9\.\-]+)')
