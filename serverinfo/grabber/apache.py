@@ -50,7 +50,7 @@ def grab_one(configfile):
     result['ips'] = list(ips)
     result['ports'] = list(ports)
 
-    result['id'] = id(result['server_names'])
+    result['id'] = id(result['servernames'])
 
     # Assumption: access log is in the buildout directory where our site is,
     # so something like /srv/DIRNAME/var/log/access.log.
