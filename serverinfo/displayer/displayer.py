@@ -266,7 +266,7 @@ def collect_data():
                                  hostname)
                 else:
                     obj.server = server
-                    if kind == 'nginx':
+                    if kind == 'nginx' or kind == 'apache':
                         server.sites.append(obj)
                     elif kind == 'buildout':
                         server.buildouts.append(obj)
