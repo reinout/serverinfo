@@ -246,6 +246,14 @@ def collect_data():
             if buildout is not None:
                 nginx.buildout = buildout
                 buildout.site = nginx
+    # Link buildouts and apache sites.
+    for apache in data['apache'].values():
+        buildout_id = apache.data.get('buildout_id')
+        if buildout_id is not None:
+            buildout = data['buildout'].get(buildout_id)
+            if buildout is not None:
+                apache.buildout = buildout
+                buildout.site = apache
     # Link buildouts+sites with servers.
     for kind in ['nginx', 'buildout']:
         for obj in data[kind].values():
