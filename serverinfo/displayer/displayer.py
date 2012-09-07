@@ -14,6 +14,7 @@ from serverinfo import utils
 
 data = {}
 data['server'] = {}
+data['apache'] = {}
 data['buildout'] = {}
 data['nginx'] = {}
 data['egg'] = {}
