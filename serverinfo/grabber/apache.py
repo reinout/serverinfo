@@ -49,11 +49,11 @@ def grab_one(configfile):
     logger.debug("Servernames/aliases found: %s", servernames)
     logger.debug("IP addresses we listen to found: %s", ips)
     logger.debug("Local ports we redirect to found: %s", ports)
-    result['servernames'] = list(servernames)
+    result['server_names'] = list(servernames)
     result['ips'] = list(ips)
     result['ports'] = list(ports)
 
-    result['id'] = id(result['servernames'])
+    result['id'] = id(result['server_names'])
 
     # Assumption: access log is in the buildout directory where our site is,
     # so something like /srv/DIRNAME/var/log/access.log.
