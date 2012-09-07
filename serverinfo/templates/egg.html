@@ -28,9 +28,16 @@
         <dt>{{ version }}</dt>
         <dd>
           {% for buildout in buildouts %}
-            <div>
-              <a href="{{ buildout.site.link }}">{{ buildout.site.id }}</a>
-            </div>
+            {% if buildout.site %}
+              <div>
+                <a href="{{ buildout.site.link }}">{{ buildout.site.id }}</a>
+              </div>
+            {% else %}
+              <div>
+                <a href="{{ buildout.link }}">{{ buildout.id }}</a> (unused
+                buildout directory)
+              </div>
+            {% endif %}
           {% endfor %}
         </dd>
       {% endfor %}
