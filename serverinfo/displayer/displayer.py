@@ -186,6 +186,7 @@ class Server(Common):
     def prepare(self):
         self.sites = []
         self.buildouts = []
+        self.ports = {}
 
     @property
     def sites_for_display(self):
@@ -195,6 +196,10 @@ class Server(Common):
     def buildouts_for_display(self):
         return sorted(self.buildouts)
 
+    @property
+    def ports_for_display(self):
+        for key in sorted(self.ports.keys()):
+            yield key, self.ports[key]
 
 class Egg(Common):
     # Well, it is not actually that common...
@@ -270,6 +275,19 @@ def collect_data():
                         server.sites.append(obj)
                     elif kind == 'buildout':
                         server.buildouts.append(obj)
+    # Link nginx gunicorn ports with servers.
+    for kind in ['nginx']:
+        for obj in data[kind].values():
+            hostname = obj.data.get('hostname')
+            port = obj.data.get('proxy_port')
+            if hostname is not None and port is not None:
+                hostname = hostname.lower()
+                server = data['server'].get(hostname)
+                if server is None:
+                    logger.error("Server with hostname %s not found.",
+                                 hostname)
+                    continue
+                server.ports[port] = obj
 
 
 def generate_html():

@@ -22,6 +22,22 @@
       {% endfor %}
     </dl>
 
+    {% if view.ports %}
+      <h2>Used proxy ports</h2>
+      <p>
+        Note that normally the following ports also have the +1 value in use
+        for supervisord. So stick to multiples of 10 if you need a new port.
+      </p>
+      <ul>
+        {% for port, site in view.ports_for_display %}
+          <li>
+            <b>{{ port }}</b>:
+            <a href="{{ site.link }}">{{ site.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
     <h2>Sites</h2>
     <ul>
       {% for site in view.sites_for_display %}
