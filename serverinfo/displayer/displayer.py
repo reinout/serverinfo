@@ -100,6 +100,9 @@ class Nginx(Common):
                        'server',
                        ]
 
+    def __cmp__(self, other):
+        return cmp(self.id[::-1], other.id[::-1])
+
     @property
     def raw_contents(self):
         return '\n'.join(self.data['contents'])
@@ -200,6 +203,7 @@ class Server(Common):
     def ports_for_display(self):
         for key in sorted(self.ports.keys()):
             yield key, self.ports[key]
+
 
 class Egg(Common):
     # Well, it is not actually that common...
