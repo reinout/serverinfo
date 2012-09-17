@@ -289,6 +289,10 @@ def collect_data():
         for obj in data[kind].values():
             hostname = obj.data.get('hostname')
             port = obj.data.get('proxy_port')
+            try:
+                port = int(port)
+            except:
+                pass
             if hostname is not None and port is not None:
                 hostname = hostname.lower()
                 server = data['server'].get(hostname)
