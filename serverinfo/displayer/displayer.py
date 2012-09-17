@@ -100,8 +100,13 @@ class Nginx(Common):
                        'server',
                        ]
 
+    def _splitted_for_sort(self):
+        parts = self.id.split('.')
+        parts.reverse()
+        return parts
+
     def __cmp__(self, other):
-        return cmp(self.id[::-1], other.id[::-1])
+        return cmp(self._splitted_for_sort(), other._splitted_for_sort())
 
     @property
     def raw_contents(self):
