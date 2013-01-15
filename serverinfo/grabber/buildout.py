@@ -11,6 +11,7 @@ import copy
 import json
 import logging
 import os
+import re
 import subprocess
 import sys
 
@@ -20,6 +21,17 @@ from serverinfo import utils
 
 FILENAME = 'buildout___{id}.json'
 SRV_DIR = '/srv/'
+GIT_URL = re.compile(r"""
+    origin           # We want the origin remote.
+    \W*              # Whitespace.
+    git@github.com:  # Base github incantation.
+    (?P<user>.+)     # User/org string.
+    /                # Slash.
+    (?P<project>.+)  # Project.
+    \.git             # .git
+    .*$              # Whatever till the end of line.
+    """, re.VERBOSE)
+
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +59,8 @@ def vcs_info(directory):
         data['vcs'] = 'hg'
     elif '.svn' in dir_contents:
         data['vcs'] = 'svn'
+    elif '.git' in dir_contents:
+        data['vcs'] = 'git'
     else:
         return data
 
@@ -58,6 +72,24 @@ def vcs_info(directory):
         sub = subprocess.Popen('hg id -t', cwd=directory, shell=True,
                                stdout=subprocess.PIPE)
         data['release'] = sub.communicate()[0].strip()
+    if data['vcs'] == 'git':
+        sub = subprocess.Popen('git remote -v', cwd=directory, shell=True,
+                               stdout=subprocess.PIPE)
+        for line in sub.communicate():
+            match = GIT_URL.search(line)
+            data['url'] = 'https://github.com/{user}/{project}'.format(
+                user=match.group('user'),
+                project=match.group('project'))
+        sub = subprocess.Popen('git status', cwd=directory, shell=True,
+                               stdout=subprocess.PIPE)
+        first_line = sub.communicate()[0]
+        if 'master' in first_line:
+            data['release'] = 'master'
+        else:
+            sub = subprocess.Popen('git describe', cwd=directory, shell=True,
+                                   stdout=subprocess.PIPE)
+            first_line = sub.communicate()[0]
+            data['release'] = first_line.strip()
     if data['vcs'] == 'svn':
         sub = subprocess.Popen('svn info --xml', cwd=directory, shell=True,
                                stdout=subprocess.PIPE)
@@ -129,5 +161,3 @@ def grab_all():
                      if os.path.exists(os.path.join(d, 'buildout.cfg'))]
     for buildout_dir in buildout_dirs:
         grab_one(buildout_dir)
-
-
