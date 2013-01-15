@@ -76,6 +76,8 @@ def vcs_info(directory):
         sub = subprocess.Popen('git remote -v', cwd=directory, shell=True,
                                stdout=subprocess.PIPE)
         for line in sub.communicate():
+            if not line:
+                continue
             match = GIT_URL.search(line)
             data['url'] = 'https://github.com/{user}/{project}'.format(
                 user=match.group('user'),
