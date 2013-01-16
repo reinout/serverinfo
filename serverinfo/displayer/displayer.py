@@ -53,7 +53,7 @@ class Common(object):
     @property
     def links(self):
         for link_attribute in self.link_attributes:
-            obj = getattr(self, link_attribute)
+            obj = getattr(self, link_attribute, None)
             if obj is None:
                 continue
             yield obj.link, obj.title
