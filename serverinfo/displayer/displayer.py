@@ -132,6 +132,7 @@ class CodeLink(object):
     def link(self):
         if self.vcs == 'svn':
             return self.url.replace('svn/Products', 'trac/browser/Products')
+        return self.url
 
 
 class Buildout(Common):
