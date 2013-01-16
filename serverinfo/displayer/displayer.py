@@ -171,6 +171,7 @@ class Buildout(Common):
             # https://office.lizard.net/trac/browser/Products
             # https://office.lizard.net/svn/Products/sites/demo/tags/3.0.11/
             self.code_url = CodeLink(vcs, vcs_url)
+            self.author_suggestion = None
             if vcs == 'git':
                 self.author_suggestion = AuthorSuggestionLink(vcs, vcs_url)
 
