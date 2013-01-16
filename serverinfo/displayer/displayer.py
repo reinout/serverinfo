@@ -117,7 +117,6 @@ class Apache(Nginx):
     title_prefix = 'Apache configuration of'
 
 
-
 class CodeLink(object):
 
     def __init__(self, vcs, url):
@@ -135,6 +134,18 @@ class CodeLink(object):
         return self.url
 
 
+class AuthorSuggestionLink(object):
+    title = "Who worked on this?"
+
+    def __init__(self, vcs, url):
+        assert(vcs == 'git')
+        self.url = url
+
+    @property
+    def link(self):
+        return self.url + '/graphs/contributors'
+
+
 class Buildout(Common):
     subdir = 'buildouts'
     template_name = 'buildout.html'
@@ -148,7 +159,7 @@ class Buildout(Common):
     site = None
     code_url = None
     server = None
-    link_attributes = ['site', 'code_url', 'server']
+    link_attributes = ['site', 'code_url', 'server', 'author_suggestion']
     # TODO: KGS handling, just like eggs.
 
     def prepare(self):
@@ -160,6 +171,8 @@ class Buildout(Common):
             # https://office.lizard.net/trac/browser/Products
             # https://office.lizard.net/svn/Products/sites/demo/tags/3.0.11/
             self.code_url = CodeLink(vcs, vcs_url)
+            if vcs == 'git':
+                self.author_suggestion = AuthorSuggestionLink(vcs, vcs_url)
 
         self.eggs = {}
         for egg_name, version in self.data['eggs'].items():
